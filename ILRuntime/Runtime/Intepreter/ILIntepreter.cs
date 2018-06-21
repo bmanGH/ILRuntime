@@ -1759,7 +1759,11 @@ namespace ILRuntime.Runtime.Intepreter
                                             {
                                                 var redirect = cm.Redirection;
                                                 if (redirect != null)
+                                                {
+                                                    bp = stack.ValueTypeStackPointer;
+                                                    ValueTypeBasePointer = bp;
                                                     esp = redirect(this, esp, mStack, cm, false);
+                                                }
                                                 else
                                                 {
 #if DEBUG && !DISABLE_ILRUNTIME_DEBUG
@@ -2434,7 +2438,11 @@ namespace ILRuntime.Runtime.Intepreter
                                             {
                                                 var redirect = cm.Redirection;
                                                 if (redirect != null)
+                                                {
+                                                    bp = stack.ValueTypeStackPointer;
+                                                    ValueTypeBasePointer = bp;
                                                     esp = redirect(this, esp, mStack, cm, true);
+                                                }
                                                 else
                                                 {
                                                     object result = cm.Invoke(this, esp, mStack, true);

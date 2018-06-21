@@ -153,9 +153,9 @@ namespace ILRuntime.Runtime.CLRBinding
                         sb.AppendLine(string.Format("            if (ILRuntime.Runtime.Generated.CLRBindings.s_{0}_Binder != null) {{", clsName));
 
                         if (isMultiArr)
-                            sb.AppendLine(string.Format("                ILRuntime.Runtime.Generated.CLRBindings.s_{1}_Binder.ParseValue(ref a{0}, __intp, ptr_of_this_method, __mStack);", j, clsName));
+                            sb.AppendLine(string.Format("                ILRuntime.Runtime.Generated.CLRBindings.s_{1}_Binder.ParseValue(ref a{0}, __intp, ptr_of_this_method, __mStack, {2});", j, clsName, isByRef ? "true" : "false"));
                         else
-                            sb.AppendLine(string.Format("                ILRuntime.Runtime.Generated.CLRBindings.s_{1}_Binder.ParseValue(ref @{0}, __intp, ptr_of_this_method, __mStack);", p.Name, clsName));
+                            sb.AppendLine(string.Format("                ILRuntime.Runtime.Generated.CLRBindings.s_{1}_Binder.ParseValue(ref @{0}, __intp, ptr_of_this_method, __mStack, {2});", p.Name, clsName, isByRef ? "true" : "false"));
 
                         sb.AppendLine("            } else {");
 
@@ -165,7 +165,7 @@ namespace ILRuntime.Runtime.CLRBinding
                             sb.AppendLine(string.Format("                a{0} = {1};", j, p.ParameterType.GetRetrieveValueCode(realClsName)));
                         else
                             sb.AppendLine(string.Format("                @{0} = {1};", p.Name, p.ParameterType.GetRetrieveValueCode(realClsName)));
-                        if (!isByRef && !p.ParameterType.IsPrimitive)
+                        if (!isByRef)
                             sb.AppendLine("                __intp.Free(ptr_of_this_method);");
 
                         sb.AppendLine("            }");
@@ -240,15 +240,12 @@ namespace ILRuntime.Runtime.CLRBinding
 
                         sb.AppendLine(string.Format("            if (ILRuntime.Runtime.Generated.CLRBindings.s_{0}_Binder != null) {{", clsName));
 
-                        sb.AppendLine(string.Format("                ILRuntime.Runtime.Generated.CLRBindings.s_{0}_Binder.ParseValue(ref instance_of_this_method, __intp, ptr_of_this_method, __mStack);", clsName));
+                        sb.AppendLine(string.Format("                ILRuntime.Runtime.Generated.CLRBindings.s_{0}_Binder.ParseValue(ref instance_of_this_method, __intp, ptr_of_this_method, __mStack, {1});", clsName, "true"));
 
                         sb.AppendLine("            } else {");
 
-                        if (type.IsValueType)
-                            sb.AppendLine("                ptr_of_this_method = ILIntepreter.GetObjectAndResolveReference(ptr_of_this_method);");
+                        sb.AppendLine("                ptr_of_this_method = ILIntepreter.GetObjectAndResolveReference(ptr_of_this_method);");
                         sb.AppendLine(string.Format("                instance_of_this_method = {0};", type.GetRetrieveValueCode(typeClsName)));
-                        if (!type.IsValueType)
-                            sb.AppendLine("                __intp.Free(ptr_of_this_method);");
 
                         sb.AppendLine("            }");
                     }
