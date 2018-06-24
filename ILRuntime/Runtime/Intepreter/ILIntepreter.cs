@@ -1760,9 +1760,9 @@ namespace ILRuntime.Runtime.Intepreter
                                                 var redirect = cm.Redirection;
                                                 if (redirect != null)
                                                 {
-                                                    bp = stack.ValueTypeStackPointer;
-                                                    ValueTypeBasePointer = bp;
+                                                    //ValueTypeBasePointer = stack.ValueTypeStackPointer;
                                                     esp = redirect(this, esp, mStack, cm, false);
+                                                    //ValueTypeBasePointer = bp;
                                                 }
                                                 else
                                                 {
@@ -1923,6 +1923,7 @@ namespace ILRuntime.Runtime.Intepreter
                                             dst = Minus(dst, (int)ip->TokenLong + 1);
                                         else
                                             dst = Minus(dst, ((CLRType)ft).FieldIndexMapping[(int)ip->TokenLong] + 1);
+                                        FreeStackValueType(ret);
                                         CopyToStack(ret, dst, mStack);
                                     }
                                     else
@@ -1974,6 +1975,7 @@ namespace ILRuntime.Runtime.Intepreter
                                         {
                                             fieldAddr = Minus(*(StackObject**)&objRef->Value, ((CLRType)ft).FieldIndexMapping[(int)ip->TokenLong] + 1);
                                         }
+                                        FreeStackValueType(dst);
                                         dst->ObjectType = ObjectTypes.StackObjectReference;
                                         *(StackObject**)&dst->Value = fieldAddr;
                                     }
@@ -2439,9 +2441,9 @@ namespace ILRuntime.Runtime.Intepreter
                                                 var redirect = cm.Redirection;
                                                 if (redirect != null)
                                                 {
-                                                    bp = stack.ValueTypeStackPointer;
-                                                    ValueTypeBasePointer = bp;
+                                                    //ValueTypeBasePointer = stack.ValueTypeStackPointer;
                                                     esp = redirect(this, esp, mStack, cm, true);
+                                                    //ValueTypeBasePointer = bp;
                                                 }
                                                 else
                                                 {
