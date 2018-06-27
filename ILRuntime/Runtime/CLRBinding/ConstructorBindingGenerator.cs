@@ -44,6 +44,7 @@ namespace ILRuntime.Runtime.CLRBinding
                 sb2.Append("}");
                 sb.AppendLine(string.Format("            args = new Type[]{0};", sb2));
                 sb.AppendLine("            method = type.GetConstructor(flag, null, args, null);");
+                sb.AppendLine("            if (method == null) throw new System.NotSupportedException(\"Can not register:\" + type.FullName + \".ctor\");");
                 sb.AppendLine(string.Format("            app.RegisterCLRMethodRedirection(method, Ctor_{0});",idx));
 
                 idx++;

@@ -23,6 +23,7 @@ namespace ILRuntime.Runtime.CLRBinding
                     continue;
 
                 sb.AppendLine(string.Format("            field = type.GetField(\"{0}\", flag);", i.Name));
+                sb.AppendLine(string.Format("            if (field == null)  throw new System.NotSupportedException(\"Can not register:\" + type.FullName + \".\" + \"{0}\");", i.Name));
                 sb.AppendLine(string.Format("            app.RegisterCLRFieldGetter(field, get_{0}_{1});", i.Name, idx));
                 if (!i.IsInitOnly && !i.IsLiteral)
                 {

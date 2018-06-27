@@ -104,6 +104,7 @@ namespace ILRuntime.Runtime.CLRBinding
                     sb2.Append("}");
                     sb.AppendLine(string.Format("            args = new Type[]{0};", sb2));
                     sb.AppendLine(string.Format("            method = type.GetMethod(\"{0}\", flag, null, args, null);", i.Name));
+                    sb.AppendLine(string.Format("            if (method == null) throw new System.NotSupportedException(\"Can not register:\" + type.FullName + \".\" + \"{0}\");", i.Name));
                     sb.AppendLine(string.Format("            app.RegisterCLRMethodRedirection(method, {0}_{1});", i.Name, idx));
                 }
 
