@@ -127,6 +127,10 @@ namespace ILRuntime.Runtime.Enviorment
                 {
                     RegisterCLRMethodRedirection(i, CLRRedirections.EnumGetNames);
                 }
+                if(i.Name == "GetName")
+                {
+                    RegisterCLRMethodRedirection(i, CLRRedirections.EnumGetName);
+                }
             }
             mi = typeof(System.Type).GetMethod("GetTypeFromHandle");
             RegisterCLRMethodRedirection(mi, CLRRedirections.GetTypeFromHandle);
@@ -774,7 +778,7 @@ namespace ILRuntime.Runtime.Enviorment
                         }
                         else
                             val = GetType(gType.GenericArguments[i], contextType, contextMethod);
-                        if (val != null && val.HasGenericParameter)
+                        if (val != null && gType.GenericArguments[i].ContainsGenericParameter)
                             dummyGenericInstance = true;
                         if (val != null)
                             genericArguments[i] = new KeyValuePair<string, IType>(key, val);
@@ -885,7 +889,6 @@ namespace ILRuntime.Runtime.Enviorment
         /// <returns></returns>
         public T Instantiate<T>(string type, object[] args = null)
         {
-            Console.WriteLine("**Calling: Instantiate<T>");
             ILTypeInstance ins = Instantiate(type, args);
             return (T)ins.CLRInstance;
         }
