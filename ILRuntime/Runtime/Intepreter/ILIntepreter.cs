@@ -1923,8 +1923,9 @@ namespace ILRuntime.Runtime.Intepreter
                                             dst = Minus(dst, (int)ip->TokenLong + 1);
                                         else
                                             dst = Minus(dst, ((CLRType)ft).FieldIndexMapping[(int)ip->TokenLong] + 1);
-                                        FreeStackValueType(ret);
+                                        StackObject valRef = *ret;                                        
                                         CopyToStack(ret, dst, mStack);
+                                        FreeStackValueType(&valRef);
                                     }
                                     else
                                     {
