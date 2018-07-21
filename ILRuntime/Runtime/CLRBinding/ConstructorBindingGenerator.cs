@@ -11,9 +11,6 @@ namespace ILRuntime.Runtime.CLRBinding
     {
         internal static string GenerateConstructorRegisterCode(this Type type, ConstructorInfo[] methods, HashSet<MethodBase> excludes)
         {
-            if (type.IsAbstract)
-                return "";
-
             StringBuilder sb = new StringBuilder();
             int idx = 0;
             foreach (var i in methods)
