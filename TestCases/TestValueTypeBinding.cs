@@ -182,5 +182,46 @@ namespace TestCases
 
             Console.WriteLine(vecCls.Vector2);
         }
+
+        public static void UnitTest_10031()
+        {
+            TestVector3 pos = TestVector3.One2;
+            float offsetX = pos.X - 0.1f;
+            float offsetY = pos.Y - 0.1f;//报错行数在这里
+            if (offsetX > 1)
+                Console.WriteLine("1");
+            else if (offsetX < -1)
+                Console.WriteLine("2");
+            //注释下面的代码就不会出错了
+            else if (offsetY > 1)
+                Console.WriteLine("3");
+            else if (offsetY < -1)
+                Console.WriteLine("4");
+
+        }
+
+        public static void UnitTest_10032()
+        {
+            TestVectorClass VTest = new TestVectorClass();
+
+            TestVector3 value = VTest.vector;
+            value.Normalize();
+            VTest.vector.Normalize();
+            Console.WriteLine("Vector3BindingTest local Vector3 normalized = " + value);
+            Console.WriteLine("Vector3BindingTest Vector3 normalized = " + VTest.vector);
+
+        }
+
+        public static void UnitTest_10033()
+        {
+            TestVector3[] arr2 = new TestVector3[10];
+            arr2[0].X = 1243;
+
+            Vector3[] arr3 = new Vector3[10];
+            arr3[0].x = 3143;
+
+            Console.WriteLine(arr2[0].X);
+            Console.WriteLine(arr3[0].x);
+        }
     }
 }

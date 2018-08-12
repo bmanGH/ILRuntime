@@ -670,7 +670,6 @@ namespace ILRuntime.Runtime.Intepreter
                                             {
                                                 *dst = *val;
                                                 dst->ObjectType = ObjectTypes.Long;
-                                                dst->ValueLow = 0;
                                             }
                                             break;
                                     }
@@ -1872,6 +1871,13 @@ namespace ILRuntime.Runtime.Intepreter
                                                                     }
                                                                 }
                                                                 break;
+                                                            case ObjectTypes.ArrayReference:
+                                                                {
+                                                                    var arr = mStack[objRef->Value] as Array;
+                                                                    int idx = objRef->ValueLow;
+                                                                    arr.SetValue(obj, idx);
+                                                                }
+                                                                break;
                                                             case ObjectTypes.StaticFieldReference:
                                                                 {
                                                                     var it = AppDomain.GetType(objRef->Value);
@@ -1976,9 +1982,10 @@ namespace ILRuntime.Runtime.Intepreter
                                         {
                                             fieldAddr = Minus(*(StackObject**)&objRef->Value, ((CLRType)ft).FieldIndexMapping[(int)ip->TokenLong] + 1);
                                         }
-                                        FreeStackValueType(dst);
+                                        StackObject valRef = *dst;
                                         dst->ObjectType = ObjectTypes.StackObjectReference;
                                         *(StackObject**)&dst->Value = fieldAddr;
+                                        FreeStackValueType(&valRef);
                                     }
                                     else
                                     {
@@ -4037,11 +4044,18 @@ namespace ILRuntime.Runtime.Intepreter
                             case OpCodeEnum.Dup:
                                 {
                                     var obj = esp - 1;
-                                    *esp = *obj;
-                                    if (esp->ObjectType >= ObjectTypes.Object)
+                                    if (obj->ObjectType == ObjectTypes.ValueTypeObjectReference)
                                     {
-                                        esp->Value = mStack.Count;
-                                        mStack.Add(mStack[obj->Value]);
+                                        CloneStackValueType(obj, esp, mStack);
+                                    }
+                                    else
+                                    {
+                                        *esp = *obj;
+                                        if (esp->ObjectType >= ObjectTypes.Object)
+                                        {
+                                            esp->Value = mStack.Count;
+                                            mStack.Add(mStack[obj->Value]);
+                                        }
                                     }
                                     esp++;
                                 }
