@@ -185,8 +185,11 @@ namespace ILRuntime.Runtime.Generated
                 Type i = info.Value.Type;
 
                 //CLR binding for delegate is important for cross domain invocation,so it should be generated
-                //if (i.BaseType == typeof(MulticastDelegate))
-                //    continue;
+                if (i.BaseType == typeof(MulticastDelegate))
+                {
+                    delegateTypes.Add(i);
+                    continue;
+                }
 
                 string clsName, realClsName;
                 bool isByRef;
@@ -303,35 +306,6 @@ namespace ILRuntime.Runtime.Generated
                 }
             }
 
-            using (System.IO.StreamWriter sw = new System.IO.StreamWriter(outputPath + "/CLRBindings.cs", false, new UTF8Encoding(false)))
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine(@"using System;
-using System.Collections.Generic;
-using System.Reflection;
-
-namespace ILRuntime.Runtime.Generated
-{
-    class CLRBindings
-    {
-        /// <summary>
-        /// Initialize the CLR binding, please invoke this AFTER CLR Redirection registration
-        /// </summary>
-        public static void Initialize(ILRuntime.Runtime.Enviorment.AppDomain app)
-        {");
-                foreach (var i in clsNames)
-                {
-                    sb.Append("            ");
-                    sb.Append(i);
-                    sb.AppendLine(".Register(app);");
-                }
-
-                sb.AppendLine(@"        }
-    }
-}");
-                sw.Write(Regex.Replace(sb.ToString(), "(?<!\r)\n", "\r\n"));
-            }
-
             var delegateClsNames = GenerateDelegateBinding(delegateTypes, outputPath);
             clsNames.AddRange(delegateClsNames);
 
@@ -394,8 +368,6 @@ namespace ILRuntime.Runtime.Generated
                                             CLR.Method.CLRMethod m = domain.GetMethod(ins.TokenInteger) as CLR.Method.CLRMethod;
                                             if (m != null)
                                             {
-                                                if (m.DeclearingType.IsDelegate)
-                                                    continue;
                                                 Type t = m.DeclearingType.TypeForCLR;
                                                 CLRBindingGenerateInfo info;
                                                 if (!infos.TryGetValue(t, out info))
